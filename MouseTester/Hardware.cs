@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MouseTester {
     public class Hardware {
+
+        //TODO: should this be changed to be left and right motor powers 
+        //      instead of forward and turn?
         private float turnPower;
         private float forwardPower;
 
