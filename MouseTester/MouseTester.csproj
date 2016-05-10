@@ -55,6 +55,10 @@
     </Compile>
     <Compile Include="Hardware.cs" />
     <Compile Include="Maze.cs" />
+    <Compile Include="MazePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Mouse.cs" />
     <Compile Include="MouseAI.cs" />
     <Compile Include="MouseRandom.cs" />
     <Compile Include="Program.cs" />

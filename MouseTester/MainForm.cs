@@ -19,6 +19,7 @@ namespace MouseTester {
 
         private void btnRebuild_Click(object sender, EventArgs e) {
             controller.rebuildMaze();
+            pnlMaze.Invalidate();
         }
 
         private void btnStart_Click(object sender, EventArgs e) {
@@ -27,10 +28,6 @@ namespace MouseTester {
 
         private void btnReset_Click(object sender, EventArgs e) {
             controller.reset();
-        }
-
-        private void pnlMaze_Paint(object sender, PaintEventArgs e) {
-            controller.drawMaze(e.Graphics, pnlMaze.ClientRectangle);
         }
     }
 }

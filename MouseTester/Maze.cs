@@ -2,15 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MouseTester {
-    class Maze {
+    public class Maze {
         Vertex[,] maze;
-        int sizeX;
-        int sizeY;
+        public int sizeX { get; }
+        public int sizeY { get; }
+        public Matrix drawingTransform;
         private static Brush brushVertex;
         private static Pen penWall;
         private static Pen penUnset;
@@ -36,22 +38,10 @@ namespace MouseTester {
         }
 
         
-        public void drawMaze(Graphics g, Rectangle bounds) {
-            int size = Math.Min(bounds.Width, bounds.Height);
-            
-            //NOTE: this assumes a square maze with square cells
-            Rectangle mazeRect = new Rectangle(
-                (bounds.Width >> 1) - (size >> 1) + bounds.X,
-                (bounds.Height >> 1) - (size >> 1) + bounds.Y,
-                size, size);
-            
+        public void drawMaze(Graphics g) {
+
             //Clear the maze
-            g.FillRectangle(Brushes.LightBlue, mazeRect);
-            var trans = g.Transform;
-            trans.Translate(mazeRect.X, mazeRect.Y);
-            trans.Translate(0, mazeRect.Height);
-            trans.Scale(mazeRect.Width / (sizeX - 1), -mazeRect.Height / (sizeY - 1));
-            g.Transform = trans;
+            g.FillRectangle(Brushes.LightBlue, 0, 0, sizeX - 1, sizeY - 1);
 
             //testing circles. Bottom left, first cell top right, maze top right
             //g.DrawEllipse(penWall, -0.5f, -0.5f, 1.0f, 1.0f);

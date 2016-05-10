@@ -10,6 +10,9 @@ namespace MouseTester {
         private float turnPower;
         private float forwardPower;
 
+
+        //TODO: threshold the power levels so < 0.2 or so does nothing.
+        //TODO: implement randomness in results to mimic unreliability. 
         private Random rng;
         private Controller controller;
 
@@ -50,6 +53,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall in the forward direction, or +INF if no data</returns>
         public float getForwardSensor() {
+            //TODO: raycast into maze and calculate value.
             return float.PositiveInfinity;
         }
 
@@ -59,6 +63,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall left of the mouse, or +INF if no data</returns>
         public float getLeftSensor() {
+            //TODO: raycast into maze and calculate value.
             return float.PositiveInfinity;
         }
 
@@ -68,6 +73,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall right of the mouse, or +INF if no data</returns>
         public float getRightSensor() {
+            //TODO: raycast into maze and calculate value.
             return float.PositiveInfinity;
         }
 

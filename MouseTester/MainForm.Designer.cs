@@ -28,7 +28,7 @@
             this.btnRebuild = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.pnlMaze = new System.Windows.Forms.Panel();
+            this.pnlMaze = new MazePanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -102,7 +102,6 @@
             this.pnlMaze.Name = "pnlMaze";
             this.pnlMaze.Size = new System.Drawing.Size(650, 545);
             this.pnlMaze.TabIndex = 1;
-            this.pnlMaze.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlMaze_Paint);
             // 
             // MainForm
             // 
@@ -125,7 +124,7 @@
         private System.Windows.Forms.Button btnRebuild;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Panel pnlMaze;
+        private MazePanel pnlMaze;
     }
 }
 

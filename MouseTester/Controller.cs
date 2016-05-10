@@ -11,17 +11,18 @@ using System.Diagnostics;
 namespace MouseTester {
     public class Controller {
         Maze maze;
-        Hardware mouse;
+        Hardware hardware;
         MouseAI ai;
-        Panel display;
+        MazePanel mazeDisplay;
+
 
         //Mouse physics parameters
-        private PointF mousePosition;
-        private PointF mouseVelocity;
-        private PointF mouseDirection;
-        private float mouseAngle;     //in radians. 0 is right, pi/2 is up.
-        private float terminalVelocity = 1.0f;
-        private float friction = 0.8f;
+        private Mouse mouse;
+        private float speedScale = 5.0f;
+        private float turnScale = 10.0f;
+
+        //private float terminalVelocity = 1.0f;
+        //private float friction = 0.8f;
 
         //Threading controls
         Thread gameThread;
@@ -32,22 +33,25 @@ namespace MouseTester {
         public int currentTick;
         public int lastTick;
 
-        public Controller(Panel display) {
-            this.display = display;
+        public Controller(MazePanel display) {
+            mazeDisplay = display;
             maze = new Maze(10, 10);
-            mouse = new Hardware(this);
+            hardware = new Hardware(this);
+            mouse = new Mouse();
             ai = new MouseRandom();
             alive = true;
             pause = new Semaphore(1, 1);
             paused = false;
-            resetMousePhysics();
+
+            display.setMaze(maze);
+            display.setMouse(mouse);
         }
 
         private void resetMousePhysics() {
-            mousePosition = new PointF(1.5f, 1.5f);
-            mouseVelocity = new PointF(0.0f, 0.0f);
-            mouseDirection = new PointF(0.0f, 1.0f);
-            mouseAngle = (float)(Math.PI / 2.0);
+            mouse.position = new PointF(1.5f, 1.5f);
+            mouse.direction = new PointF(0.0f, 1.0f);
+            mouse.speed = 0.0f;
+            mouse.angle = (float)(Math.PI / 2.0);
         }
 
         public void mainLoop() {
@@ -58,12 +62,27 @@ namespace MouseTester {
                 pause.Release();
 
                 //set deltaTime
-                currentTick = System.Environment.TickCount;
-                deltaTicks = currentTick - lastTick;
+                currentTick = System.Environment.TickCount; //this is milliseconds
+                deltaTicks = currentTick - lastTick; //This _should_ be milliseconds.
                 lastTick = currentTick;
-                
-                //update mouse physics
 
+                //perform AI update
+                ai.update(hardware);
+
+                //update mouse physics
+                //TODO: should use velocity and acceleration instead of direct position updates.
+                //TODO: momentum
+                //TODO: collide with walls
+                mouse.angle += hardware.getTurnPower() * turnScale * deltaTicks / 1000.0f;
+                mouse.direction = new PointF((float)Math.Cos(mouse.angle), (float)Math.Sin(mouse.angle));
+
+                float motion = hardware.getForwardPower() * speedScale * deltaTicks / 1000.0f;
+                mouse.position.X += mouse.direction.X * motion;
+                mouse.position.Y += mouse.direction.Y * motion;
+
+
+                //update display
+                mazeDisplay.setMouse(mouse);
             }
             Console.WriteLine("Dead.");
         }
@@ -103,15 +122,13 @@ namespace MouseTester {
                 Console.WriteLine("Thread already dead.");
             }
             resetMousePhysics();
+            mazeDisplay.setMouse(mouse);
         }
 
         public void rebuildMaze() {
             maze.rebuildMaze();
-            display.Invalidate();
+            mazeDisplay.setMaze(maze);
         }
-
-        internal void drawMaze(Graphics graphics, Rectangle clientRectangle) {
-            maze.drawMaze(graphics, clientRectangle);
-        }
+        
     }
 }
