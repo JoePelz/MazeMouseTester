@@ -10,29 +10,27 @@ using System.Windows.Forms;
 
 namespace MouseTester {
     public partial class MainForm : Form {
-        Maze maze;
+        Controller controller;
 
         public MainForm() {
             InitializeComponent();
-
-            maze = new Maze(10, 10);
+            controller = new Controller(pnlMaze);
         }
 
         private void btnRebuild_Click(object sender, EventArgs e) {
-            maze.rebuildMaze();
-            pnlMaze.Invalidate();
+            controller.rebuildMaze();
         }
 
         private void btnStart_Click(object sender, EventArgs e) {
-
+            controller.playPause();
         }
 
         private void btnReset_Click(object sender, EventArgs e) {
-
+            controller.reset();
         }
 
         private void pnlMaze_Paint(object sender, PaintEventArgs e) {
-            maze.drawMaze(e.Graphics, pnlMaze.ClientRectangle);
+            controller.drawMaze(e.Graphics, pnlMaze.ClientRectangle);
         }
     }
 }
