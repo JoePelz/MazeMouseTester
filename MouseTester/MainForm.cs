@@ -19,8 +19,10 @@ namespace MouseTester {
         }
 
         private void btnRebuild_Click(object sender, EventArgs e) {
-            controller.rebuildMaze();
-            pnlMaze.Invalidate();
+            if (!controller.isRunning) {
+                controller.rebuildMaze();
+                pnlMaze.Invalidate();
+            }
         }
 
         private void btnStart_Click(object sender, EventArgs e) {

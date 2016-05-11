@@ -20,13 +20,16 @@ namespace MouseTester {
         private Mouse mouse;
         private float speedScale = 5.0f;
         private float turnScale = 10.0f;
-
-        //private float terminalVelocity = 1.0f;
+        //private float maxSpeed = 1.0f;
         //private float friction = 0.8f;
 
         //Threading controls
         Thread gameThread;
         bool paused;
+        public bool isRunning
+        {
+            get { return !paused && alive; }
+        }
         Semaphore pause;
         public bool alive;
         public int deltaTicks;
@@ -72,7 +75,6 @@ namespace MouseTester {
                 //update mouse physics
                 //TODO: should use velocity and acceleration instead of direct position updates.
                 //TODO: momentum
-                //TODO: collide with walls
                 mouse.angle += hardware.getTurnPower() * turnScale * deltaTicks / 1000.0f;
                 mouse.direction = new PointF((float)Math.Cos(mouse.angle), (float)Math.Sin(mouse.angle));
 

@@ -6,16 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MouseTester {
+    //TODO: implement randomness in functions to mimic unreliability. 
     public class Hardware {
 
         //TODO: should this be changed to be left and right motor powers 
         //      instead of forward and turn?
+        //TODO: threshold the power levels so < 0.2 or so does nothing.
         private float turnPower;
         private float forwardPower;
 
 
-        //TODO: threshold the power levels so < 0.2 or so does nothing.
-        //TODO: implement randomness in results to mimic unreliability. 
         private Random rng;
         private Controller controller;
 
