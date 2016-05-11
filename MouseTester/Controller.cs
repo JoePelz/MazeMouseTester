@@ -79,12 +79,50 @@ namespace MouseTester {
                 float motion = hardware.getForwardPower() * speedScale * deltaTicks / 1000.0f;
                 mouse.position.X += mouse.direction.X * motion;
                 mouse.position.Y += mouse.direction.Y * motion;
-
+                fixCollisions();
 
                 //update display
                 mazeDisplay.setMouse(mouse);
             }
             Console.WriteLine("Dead.");
+        }
+
+        private void fixCollisions() {
+            float posX = mouse.position.X;
+            int posXN = (int)posX;
+            int posXNR = (int)Math.Round(posX);
+            float posY = mouse.position.Y;
+            int posYN = (int)posY;
+            int posYNR = (int)Math.Round(posY);
+            Maze.Vertex check;
+            //TODO: handle vertices, not just edges.
+            //  (doesn't work correctly if hitting edge from beside, 
+            //   rather than straight on.)
+
+
+            //fix X collisions
+            check = maze.getVertex(posXNR, posYN);
+            if (check.up == Maze.WALL &&
+                Math.Abs(posX - posXNR) < mouse.radius) { //if overlapping a vertical wall
+                //move out of it.
+                if (posX < posXNR) { //if left of wall
+                    mouse.position.X -= mouse.radius - (posXNR - posX);
+                } else { //if right of wall
+                    mouse.position.X += mouse.radius - (posX - posXNR);
+                }
+            }
+
+            //fix Y collisions
+            check = maze.getVertex(posXN, posYNR);
+            if (check.right == Maze.WALL &&
+                Math.Abs(posYNR - posY) < mouse.radius) {  //if overlapping a horizontal wall
+                //move out of it.
+                if (posY < posYNR) { //if below wall
+                    mouse.position.Y -= mouse.radius - (posYNR - posY);
+                } else { //if above wall
+                    mouse.position.Y += mouse.radius - (posY - posYNR);
+                }
+            }
         }
 
         public void playPause() {

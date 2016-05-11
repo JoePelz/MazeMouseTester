@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MouseTester {
     public class Maze {
-        Vertex[,] maze;
+        private Vertex[,] maze;
         public int sizeX { get; }
         public int sizeY { get; }
         public Matrix drawingTransform;
@@ -17,9 +17,9 @@ namespace MouseTester {
         private static Pen penWall;
         private static Pen penUnset;
         private static Pen penHighlight;
-        private static int UNSET = -1;
-        private static int WALL = 1;
-        private static int EMPTY = 0;
+        public static int UNSET = -1;
+        public static int WALL = 1;
+        public static int EMPTY = 0;
 
         public Maze(int width, int height) {
             sizeX = width + 3; //+1 for both edges, +2 for an outer layer of empties
@@ -37,7 +37,10 @@ namespace MouseTester {
             buildMaze();
         }
 
-        
+        public Vertex getVertex(int x, int y) {
+            return maze[x, y];
+        }
+
         public void drawMaze(Graphics g) {
 
             //Clear the maze
@@ -258,12 +261,12 @@ namespace MouseTester {
             return true;
         }
 
-        private class Vertex {
+        public class Vertex {
             public int up = UNSET;
             public int right = UNSET;
         }
 
-        private class Edge {
+        public class Edge {
             public int X;
             public int Y;
             public bool isHorizontal;

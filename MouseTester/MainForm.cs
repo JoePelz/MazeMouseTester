@@ -15,6 +15,7 @@ namespace MouseTester {
         public MainForm() {
             InitializeComponent();
             controller = new Controller(pnlMaze);
+            FormClosing += MainForm_Closing;
         }
 
         private void btnRebuild_Click(object sender, EventArgs e) {
@@ -27,6 +28,10 @@ namespace MouseTester {
         }
 
         private void btnReset_Click(object sender, EventArgs e) {
+            controller.reset();
+        }
+
+        private void MainForm_Closing(Object sender, FormClosingEventArgs e) {
             controller.reset();
         }
     }

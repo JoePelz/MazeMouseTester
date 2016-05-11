@@ -72,7 +72,7 @@ namespace MouseTester {
             if (mouse != null) {
                 g.DrawEllipse(mousePen, 
                     mouse.position.X - 0.2f, 
-                    mouse.position.Y - 0.2f, 
+                    mouse.position.Y - 0.2f,
                     0.4f, 
                     0.4f);
                 g.DrawLine(mousePen,
