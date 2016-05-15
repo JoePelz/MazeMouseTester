@@ -15,7 +15,6 @@ namespace MouseTester {
         private float turnPower;
         private float forwardPower;
 
-
         private Random rng;
         private Controller controller;
 
@@ -56,8 +55,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall in the forward direction, or +INF if no data</returns>
         public float getForwardSensor() {
-            //TODO: raycast into maze and calculate value.
-            return float.PositiveInfinity;
+            return controller.CastRayFromMouse(0.0f);
         }
 
         /// <summary>
@@ -66,8 +64,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall left of the mouse, or +INF if no data</returns>
         public float getLeftSensor() {
-            //TODO: raycast into maze and calculate value.
-            return float.PositiveInfinity;
+            return controller.CastRayFromMouse((float)(-Math.PI / 2.0));
         }
 
         /// <summary>
@@ -76,8 +73,7 @@ namespace MouseTester {
         /// </summary>
         /// <returns>Distance to the nearest wall right of the mouse, or +INF if no data</returns>
         public float getRightSensor() {
-            //TODO: raycast into maze and calculate value.
-            return float.PositiveInfinity;
+            return controller.CastRayFromMouse((float)(Math.PI / 2.0));
         }
 
         /// <summary>

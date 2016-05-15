@@ -64,9 +64,9 @@ namespace MouseTester {
 
             if (bg != null) {
                 g.DrawImage(bg, 0, 0);
+                g.Transform = trans;
             }
 
-            g.Transform = trans;
 
             //draw other stuff here
             if (mouse != null) {

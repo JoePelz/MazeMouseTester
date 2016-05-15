@@ -13,6 +13,7 @@ namespace MouseTester {
         Maze maze;
         Hardware hardware;
         MouseAI ai;
+        RichTextBox txtFeedback;
         MazePanel mazeDisplay;
 
 
@@ -24,19 +25,21 @@ namespace MouseTester {
         //private float friction = 0.8f;
 
         //Threading controls
-        Thread gameThread;
-        bool paused;
+        private Thread gameThread;
+        private bool paused;
+        private Semaphore pause;
+        private bool alive;
+        private int deltaTicks;
+        private int currentTick;
+        private int lastTick;
+
         public bool isRunning
         {
             get { return !paused && alive; }
         }
-        Semaphore pause;
-        public bool alive;
-        public int deltaTicks;
-        public int currentTick;
-        public int lastTick;
 
-        public Controller(MazePanel display) {
+        public Controller(MazePanel display, RichTextBox feedback) {
+            txtFeedback = feedback;
             mazeDisplay = display;
             maze = new Maze(10, 10);
             hardware = new Hardware(this);
@@ -48,6 +51,11 @@ namespace MouseTester {
 
             display.setMaze(maze);
             display.setMouse(mouse);
+        }
+
+        internal void printDebug() {
+            txtFeedback.Clear();
+            txtFeedback.AppendText("Forward: " + hardware.getForwardSensor());
         }
 
         private void resetMousePhysics() {
@@ -89,6 +97,26 @@ namespace MouseTester {
             Console.WriteLine("Dead.");
         }
 
+        internal float CastRayFromMouse(float angle) {
+            //build ray pointing correct direction
+            //TODO: build direction from angle
+            Ray ray = new Ray(mouse.position, mouse.direction);
+
+            //determine ray collision point
+            PointF col = maze.RayCast(ray);
+
+            if (col.X >= 0) {
+                //distance from mouse to ray collision
+                double distance = Math.Sqrt(
+                    (col.X - mouse.position.X) * (col.X - mouse.position.X) + 
+                    (col.Y - mouse.position.Y) * (col.Y - mouse.position.Y));
+                return (float)distance;
+            } else {
+                //no wall detected
+                return float.PositiveInfinity;
+            }
+        }
+
         private void fixCollisions() {
             float posX = mouse.position.X;
             int posXN = (int)posX;
@@ -96,7 +124,7 @@ namespace MouseTester {
             float posY = mouse.position.Y;
             int posYN = (int)posY;
             int posYNR = (int)Math.Round(posY);
-            Maze.Vertex check;
+            Vertex check;
             //TODO: handle vertices, not just edges.
             //  (doesn't work correctly if hitting edge from beside, 
             //   rather than straight on.)

@@ -28,7 +28,9 @@
             this.btnRebuild = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.pnlMaze = new MazePanel();
+            this.pnlMaze = new MouseTester.MazePanel();
+            this.txtFeedback = new System.Windows.Forms.RichTextBox();
+            this.btnDebug = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -53,6 +55,8 @@
             this.flowLayoutPanel1.Controls.Add(this.btnRebuild);
             this.flowLayoutPanel1.Controls.Add(this.btnStart);
             this.flowLayoutPanel1.Controls.Add(this.btnReset);
+            this.flowLayoutPanel1.Controls.Add(this.btnDebug);
+            this.flowLayoutPanel1.Controls.Add(this.txtFeedback);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(659, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -103,6 +107,26 @@
             this.pnlMaze.Size = new System.Drawing.Size(650, 545);
             this.pnlMaze.TabIndex = 1;
             // 
+            // txtFeedback
+            // 
+            this.txtFeedback.Location = new System.Drawing.Point(3, 187);
+            this.txtFeedback.Name = "txtFeedback";
+            this.txtFeedback.Size = new System.Drawing.Size(150, 243);
+            this.txtFeedback.TabIndex = 3;
+            this.txtFeedback.Text = "";
+            // 
+            // btnDebug
+            // 
+            this.btnDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDebug.Font = new System.Drawing.Font("Linux Biolinum G", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDebug.Location = new System.Drawing.Point(3, 141);
+            this.btnDebug.Name = "btnDebug";
+            this.btnDebug.Size = new System.Drawing.Size(150, 40);
+            this.btnDebug.TabIndex = 4;
+            this.btnDebug.Text = "Debug Text";
+            this.btnDebug.UseVisualStyleBackColor = true;
+            this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,6 +149,8 @@
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnReset;
         private MazePanel pnlMaze;
+        private System.Windows.Forms.Button btnDebug;
+        private System.Windows.Forms.RichTextBox txtFeedback;
     }
 }
 

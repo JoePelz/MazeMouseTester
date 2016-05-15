@@ -41,6 +41,121 @@ namespace MouseTester {
             return maze[x, y];
         }
 
+        public PointF RayCast(Ray ray) {
+            PointF result = new PointF(-1, -1);
+            PointF tempPos = new PointF(ray.origin.X, ray.origin.Y);
+            float tX, tY;
+
+            //I feel like there should be a better way than discretely 
+            //  testing 8 directions with almost identical algorithms.
+
+            int maxIterations = 20;
+
+            while (maxIterations-- > 0) {
+                //upward directions
+                if (ray.direction.X > 0 && ray.direction.Y > 0) {
+                    tX = (float)((Math.Ceiling(tempPos.X) - tempPos.X) / ray.direction.X);
+                    tY = (float)((Math.Ceiling(tempPos.Y) - tempPos.Y) / ray.direction.Y);
+                    if (tX < tY) {
+                        tempPos.X += ray.direction.X * tX;
+                        tempPos.Y += ray.direction.Y * tX;
+                        if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                            return tempPos;
+                        }
+                    } else {
+                        tempPos.X += ray.direction.X * tY;
+                        tempPos.Y += ray.direction.Y * tY;
+                        if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                            return tempPos;
+                        }
+                    }
+                } else if (ray.direction.X < 0 && ray.direction.Y > 0) {
+                    tX = (float)((Math.Floor(tempPos.X) - tempPos.X) / ray.direction.X);
+                    tY = (float)((Math.Ceiling(tempPos.Y) - tempPos.Y) / ray.direction.Y);
+                    if (tX < tY) {
+                        tempPos.X += ray.direction.X * tX;
+                        tempPos.Y += ray.direction.Y * tX;
+                        if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                            return tempPos;
+                        }
+                    } else {
+                        tempPos.X += ray.direction.X * tY;
+                        tempPos.Y += ray.direction.Y * tY;
+                        if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                            return tempPos;
+                        }
+                    }
+                } else if (ray.direction.X == 0 && ray.direction.Y > 0) {
+                    tY = (float)(Math.Ceiling(tempPos.Y) - tempPos.Y);
+                    tempPos.Y += tY;
+                    if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                        return tempPos;
+                    }
+                }
+
+                //left and right directions
+                else if (ray.direction.X < 0 && ray.direction.Y == 0) {
+                    tX = (float)(Math.Floor(tempPos.X) - tempPos.X);
+                    tempPos.X += tX;
+                    if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                        return tempPos;
+                    }
+                } else if (ray.direction.X > 0 && ray.direction.Y == 0) {
+                    tX = (float)(Math.Ceiling(tempPos.X) - tempPos.X);
+                    tempPos.X += tX;
+                    if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                        return tempPos;
+                    }
+                }
+
+                //downward directions
+                else if (ray.direction.X < 0 && ray.direction.Y < 0) {
+                    tX = (float)((Math.Floor(tempPos.X) - tempPos.X) / ray.direction.X);
+                    tY = (float)((Math.Floor(tempPos.Y) - tempPos.Y) / ray.direction.Y);
+                    if (tX < tY) {
+                        tempPos.X += ray.direction.X * tX;
+                        tempPos.Y += ray.direction.Y * tX;
+                        if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                            return tempPos;
+                        }
+                    } else {
+                        tempPos.X += ray.direction.X * tY;
+                        tempPos.Y += ray.direction.Y * tY;
+                        if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                            return tempPos;
+                        }
+                    }
+                } else if (ray.direction.X > 0 && ray.direction.Y < 0) {
+                    tX = (float)((Math.Ceiling(tempPos.X) - tempPos.X) / ray.direction.X);
+                    tY = (float)((Math.Floor(tempPos.Y) - tempPos.Y) / ray.direction.Y);
+                    if (tX < tY) {
+                        tempPos.X += ray.direction.X * tX;
+                        tempPos.Y += ray.direction.Y * tX;
+                        if (maze[(int)Math.Round(tempPos.X), (int)Math.Floor(tempPos.Y)].up == WALL) {
+                            return tempPos;
+                        }
+                    } else {
+                        tempPos.X += ray.direction.X * tY;
+                        tempPos.Y += ray.direction.Y * tY;
+                        if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                            return tempPos;
+                        }
+                    }
+                } else if (ray.direction.X == 0 && ray.direction.Y < 0) {
+                    tY = (float)(Math.Floor(tempPos.Y) - tempPos.Y);
+                    tempPos.Y += tY;
+                    if (maze[(int)Math.Floor(tempPos.X), (int)Math.Round(tempPos.Y)].right == WALL) {
+                        return tempPos;
+                    }
+                }
+                //prevent finding the same collision again
+                tempPos.X += ray.direction.X * 0.01f;
+                tempPos.Y += ray.direction.Y * 0.01f;
+            }
+
+            return result;
+        }
+
         public void drawMaze(Graphics g) {
 
             //Clear the maze
@@ -259,23 +374,6 @@ namespace MouseTester {
                     break;
             }
             return true;
-        }
-
-        public class Vertex {
-            public int up = UNSET;
-            public int right = UNSET;
-        }
-
-        public class Edge {
-            public int X;
-            public int Y;
-            public bool isHorizontal;
-
-            public Edge(int x, int y, bool horizontal) {
-                this.X = x;
-                this.Y = y;
-                this.isHorizontal = horizontal;
-            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace MouseTester {
 
         public MainForm() {
             InitializeComponent();
-            controller = new Controller(pnlMaze);
+            controller = new Controller(pnlMaze, txtFeedback);
             FormClosing += MainForm_Closing;
         }
 
@@ -35,6 +35,10 @@ namespace MouseTester {
 
         private void MainForm_Closing(Object sender, FormClosingEventArgs e) {
             controller.reset();
+        }
+
+        private void btnDebug_Click(object sender, EventArgs e) {
+            controller.printDebug();
         }
     }
 }
