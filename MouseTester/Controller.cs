@@ -55,7 +55,18 @@ namespace MouseTester {
 
         internal void printDebug() {
             txtFeedback.Clear();
-            txtFeedback.AppendText("Forward: " + hardware.getForwardSensor());
+            txtFeedback.AppendText("Mouse Data:\n===========\n");
+            txtFeedback.AppendText("Angle: " + mouse.angle + "\n");
+            txtFeedback.AppendText("Position: " + mouse.position + "\n");
+            txtFeedback.AppendText("Direction: " + mouse.direction + "\n");
+
+            txtFeedback.AppendText("\n");
+            txtFeedback.AppendText("Sensors:\n===========\n");
+            txtFeedback.AppendText("Forward: " + hardware.getForwardSensor() + "\n");
+            txtFeedback.AppendText("Left: " + hardware.getLeftSensor() + "\n");
+            txtFeedback.AppendText("Right: " + hardware.getRightSensor() + "\n");
+            txtFeedback.AppendText("Power Forward: " + hardware.getForwardPower() + "\n");
+            txtFeedback.AppendText("Power Turning: " + hardware.getTurnPower() + "\n");
         }
 
         private void resetMousePhysics() {
@@ -100,7 +111,8 @@ namespace MouseTester {
         internal float CastRayFromMouse(float angle) {
             //build ray pointing correct direction
             //TODO: build direction from angle
-            Ray ray = new Ray(mouse.position, mouse.direction);
+            PointF direction = new PointF((float)Math.Cos(-angle + mouse.angle), (float)Math.Sin(-angle + mouse.angle));
+            Ray ray = new Ray(mouse.position, direction);
 
             //determine ray collision point
             PointF col = maze.RayCast(ray);
