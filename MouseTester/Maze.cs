@@ -151,6 +151,12 @@ namespace MouseTester {
                 //prevent finding the same collision again
                 tempPos.X += ray.direction.X * 0.01f;
                 tempPos.Y += ray.direction.Y * 0.01f;
+
+                //check if out-of-bounds
+                if (tempPos.X > sizeX - 2 || tempPos.X < 1 ||
+                    tempPos.Y > sizeY - 2 || tempPos.Y < 1) {
+                    return new PointF(-1, -1);
+                }
             }
 
             return result;

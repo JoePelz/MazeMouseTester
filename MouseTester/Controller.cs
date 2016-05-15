@@ -55,13 +55,23 @@ namespace MouseTester {
 
         internal void printDebug() {
             txtFeedback.Clear();
+            int length = 0;
             txtFeedback.AppendText("Mouse Data:\n===========\n");
+
+            txtFeedback.Select(length, 11);
+            txtFeedback.SelectionFont = new Font(txtFeedback.Font, FontStyle.Bold);
+
             txtFeedback.AppendText("Angle: " + mouse.angle + "\n");
-            txtFeedback.AppendText("Position: " + mouse.position + "\n");
-            txtFeedback.AppendText("Direction: " + mouse.direction + "\n");
+            txtFeedback.AppendText(String.Format("Position: [{0:0.00}, {1:0.00}] \n", mouse.position.X, mouse.position.Y));
+            txtFeedback.AppendText(String.Format("Direction: [{0:0.00}, {1:0.00}] \n", mouse.direction.X, mouse.direction.Y));
 
             txtFeedback.AppendText("\n");
+            length = txtFeedback.Text.Length;
             txtFeedback.AppendText("Sensors:\n===========\n");
+            
+            txtFeedback.Select(length, 8);
+            txtFeedback.SelectionFont = new Font(txtFeedback.Font, FontStyle.Bold);
+
             txtFeedback.AppendText("Forward: " + hardware.getForwardSensor() + "\n");
             txtFeedback.AppendText("Left: " + hardware.getLeftSensor() + "\n");
             txtFeedback.AppendText("Right: " + hardware.getRightSensor() + "\n");
@@ -70,8 +80,8 @@ namespace MouseTester {
         }
 
         private void resetMousePhysics() {
-            mouse.position = new PointF(1.5f, 1.5f);
-            mouse.direction = new PointF(0.0f, 1.0f);
+            mouse.position = new PointF(Mouse.StartPosition.X, Mouse.StartPosition.Y);
+            mouse.direction = new PointF(Mouse.StartDirection.X, Mouse.StartDirection.Y);
             mouse.speed = 0.0f;
             mouse.angle = (float)(Math.PI / 2.0);
         }
@@ -140,8 +150,13 @@ namespace MouseTester {
             //TODO: handle vertices, not just edges.
             //  (doesn't work correctly if hitting edge from beside, 
             //   rather than straight on.)
-
-
+            
+            //check if out-of-bounds
+            if (posXNR > maze.sizeX - 2 || posXNR < 1 ||
+                posYNR > maze.sizeY - 2 || posYNR < 1) {
+                return;
+            }
+            
             //fix X collisions
             check = maze.getVertex(posXNR, posYN);
             if (check.up == Maze.WALL &&
