@@ -52,6 +52,12 @@ namespace MouseTester {
             int maxIterations = 20;
 
             while (maxIterations-- > 0) {
+                //check if out-of-bounds
+                if (tempPos.X > sizeX - 2 || tempPos.X < 1 ||
+                    tempPos.Y > sizeY - 2 || tempPos.Y < 1) {
+                    return new PointF(-1, -1);
+                }
+
                 //upward directions
                 if (ray.direction.X > 0 && ray.direction.Y > 0) {
                     tX = (float)((Math.Ceiling(tempPos.X) - tempPos.X) / ray.direction.X);
@@ -152,11 +158,6 @@ namespace MouseTester {
                 tempPos.X += ray.direction.X * 0.01f;
                 tempPos.Y += ray.direction.Y * 0.01f;
 
-                //check if out-of-bounds
-                if (tempPos.X > sizeX - 2 || tempPos.X < 1 ||
-                    tempPos.Y > sizeY - 2 || tempPos.Y < 1) {
-                    return new PointF(-1, -1);
-                }
             }
 
             return result;

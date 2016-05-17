@@ -18,10 +18,10 @@ namespace MouseTester {
         
         //Mouse physics parameters
         private Mouse mouse;
-        private float speedScale = 5.0f;
+        private float motorStrength = 1.0f;
         private float turnScale = 10.0f;
-        //private float maxSpeed = 1.0f;
-        //private float friction = 0.8f;
+        private float maxSpeed = 2.0f;
+        private float momentumLoss = 0.2f; //0.0 means no loss of momentum. 0.5 means coming to a stop over 1 / 0.5 seconds.
 
         //Threading controls
         private Thread gameThread;
@@ -63,6 +63,7 @@ namespace MouseTester {
             txtFeedback.AppendText("Angle: " + mouse.angle + "\n");
             txtFeedback.AppendText(String.Format("Position: [{0:0.00}, {1:0.00}] \n", mouse.position.X, mouse.position.Y));
             txtFeedback.AppendText(String.Format("Direction: [{0:0.00}, {1:0.00}] \n", mouse.direction.X, mouse.direction.Y));
+            txtFeedback.AppendText(String.Format("Velocity: [{0:0.00}, {1:0.00}] \n", mouse.velocity.X, mouse.velocity.Y));
             txtFeedback.AppendText("Radius: " + mouse.radius + "\n");
 
             txtFeedback.AppendText("\n");
@@ -99,6 +100,7 @@ namespace MouseTester {
                 lastTick = currentTick;
 
                 //perform AI update
+                hardware.setMillis(deltaTicks);
                 ai.update(hardware);
 
                 //update mouse physics
@@ -106,12 +108,29 @@ namespace MouseTester {
                 //TODO: momentum
                 mouse.angle += hardware.getTurnPower() * turnScale * deltaTicks / 1000.0f;
                 mouse.direction = new PointF((float)Math.Cos(mouse.angle), (float)Math.Sin(mouse.angle));
+                float motion = hardware.getForwardPower() * motorStrength;
+                mouse.velocity = new PointF(
+                    mouse.velocity.X + mouse.direction.X * motion, 
+                    mouse.velocity.Y + mouse.direction.Y * motion
+                    );
                 
+                //clamp velocity at maxSpeed
+                float speed = (float)Math.Sqrt(mouse.velocity.X * mouse.velocity.X + mouse.velocity.Y * mouse.velocity.Y);
+                if (speed > maxSpeed) {
+                    float speedMultiplier = maxSpeed / speed;
+                    mouse.velocity.X *= speedMultiplier;
+                    mouse.velocity.Y *= speedMultiplier;
+                }
 
-                float motion = hardware.getForwardPower() * speedScale * deltaTicks / 1000.0f;
-                mouse.position.X += mouse.direction.X * motion;
-                mouse.position.Y += mouse.direction.Y * motion;
+
+                //update mouse position, correct collisions
+                mouse.position.X += mouse.velocity.X * deltaTicks / 1000.0f;
+                mouse.position.Y += mouse.velocity.Y * deltaTicks / 1000.0f;
                 fixCollisions();
+
+                //apply "friction," (not physically accurate)
+                mouse.velocity.X -= mouse.velocity.X * (momentumLoss * deltaTicks / 1000.0f);
+                mouse.velocity.Y -= mouse.velocity.Y * (momentumLoss * deltaTicks / 1000.0f);
 
                 //update display
                 mazeDisplay.setMouse(mouse);
@@ -149,7 +168,8 @@ namespace MouseTester {
             int posYNR = (int)Math.Round(posY);
             float vDist; //distance to closest vertex
             Vertex check;
-            
+            //TODO: kill (negate?) velocity on collision
+
             //check if out-of-bounds
             if (posXNR > maze.sizeX - 2 || posXNR < 1 ||
                 posYNR > maze.sizeY - 2 || posYNR < 1) {

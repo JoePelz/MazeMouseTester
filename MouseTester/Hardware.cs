@@ -15,6 +15,7 @@ namespace MouseTester {
         private float turnPower;
         private float forwardPower;
 
+        private int deltaTime;
         private Random rng;
         private Controller controller;
 
@@ -89,6 +90,18 @@ namespace MouseTester {
             if (value > max)
                 return max;
             return value;
+        }
+
+        internal void setMillis(int deltaTicks) {
+            deltaTime = deltaTicks;
+        }
+
+        /// <summary>
+        /// Get the number of milliseconds elapsed since the last time this function was called.
+        /// </summary>
+        /// <returns>milliseconds since last execution of this routine.</returns>
+        public int getMillis() {
+            return deltaTime;
         }
     }
 }
