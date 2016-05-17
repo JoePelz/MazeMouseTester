@@ -185,7 +185,6 @@ namespace MouseTester {
             int posYNR = (int)Math.Round(posY);
             float vDist; //distance to closest vertex
             Vertex check;
-            //TODO: kill (negate?) velocity on collision
 
             //check if out-of-bounds
             if (posXNR > maze.sizeX - 2 || posXNR < 1 ||
