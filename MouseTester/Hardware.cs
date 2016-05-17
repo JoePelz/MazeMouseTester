@@ -11,7 +11,6 @@ namespace MouseTester {
 
         //TODO: should this be changed to be left and right motor powers 
         //      instead of forward and turn?
-        //TODO: threshold the power levels so < 0.2 or so does nothing.
         private float turnPower;
         private float forwardPower;
 
@@ -30,7 +29,12 @@ namespace MouseTester {
         /// </summary>
         /// <param name="power">Motor power [-1.0 : 1.0]</param>
         public void setMotorPower(float power) {
-            forwardPower = power;
+            //too weak to power up the motors
+            if (Math.Abs(power) < 0.1) {
+                return;
+            }
+
+            forwardPower = clamp(power, -1, 1);
         }
 
         /// <summary>
@@ -39,7 +43,11 @@ namespace MouseTester {
         /// </summary>
         /// <param name="power">Motor power [-1.0 : 1.0]</param>
         public void setTurnPower(float power) {
-            turnPower = power;
+            //too weak to power up the motors
+            if (Math.Abs(power) < 0.1) {
+                return;
+            }
+            turnPower = clamp(power, -1, 1);
         }
 
         public float getForwardPower() {

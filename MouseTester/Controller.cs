@@ -18,11 +18,11 @@ namespace MouseTester {
         
         //Mouse physics parameters
         private Mouse mouse;
-        private float motorStrength = 1.0f;
-        private float turnScale = 10.0f;
+        private float motorMultiplier = 1.0f;
+        private float turningMultipler = 10.0f;
         private float maxSpeed = 2.0f;
         //TODO: this doesn't work predictably.
-        private float momentumLoss = 0.01f; //0.0 means no loss of momentum (like no friction). 
+        private float momentumLoss = 0f; //0.0 means no loss of momentum (like no friction). 
 
         //Threading controls
         private Thread gameThread;
@@ -45,7 +45,8 @@ namespace MouseTester {
             hardware = new Hardware(this);
             mouse = new Mouse();
             ai = new MouseRandom();
-            alive = true;
+            //ai = new MouseTest1();
+            alive = false;
             pause = new Semaphore(1, 1);
             paused = false;
 
@@ -105,26 +106,39 @@ namespace MouseTester {
                 ai.update(hardware);
 
                 //update mouse physics
-                mouse.angle += hardware.getTurnPower() * turnScale * deltaTicks / 1000.0f;
+                mouse.angle += hardware.getTurnPower() * turningMultipler * deltaTicks / 1000.0f;
                 mouse.direction = new PointF((float)Math.Cos(mouse.angle), (float)Math.Sin(mouse.angle));
-                
-                //TODO: These physics formulae (especially "friction" below) and speculative at best,
-                //      but I don't know where to start to make it reliable. 
-                //      Issues arise in applying friction different numbers of times per frame, like compound interest.
-                float motion = hardware.getForwardPower() * motorStrength;
-                mouse.velocity = new PointF(
-                    mouse.velocity.X + mouse.direction.X * motion, 
-                    mouse.velocity.Y + mouse.direction.Y * motion
-                    );
-                
-                //clamp velocity at maxSpeed
-                float speed = (float)Math.Sqrt(mouse.velocity.X * mouse.velocity.X + mouse.velocity.Y * mouse.velocity.Y);
-                if (speed > maxSpeed) {
-                    float speedMultiplier = maxSpeed / speed;
-                    mouse.velocity.X *= speedMultiplier;
-                    mouse.velocity.Y *= speedMultiplier;
-                }
 
+                //TODO: These physics formulae (especially "friction" below) are guesses,
+                //      but I don't know how to make it reliable right now.
+                //      Issues arise in applying friction different numbers of times per frame, like compound interest.
+                
+                
+                //Only accelerate more if current speed is less than powerlevel * maxSpeed
+                float speed = (float)Math.Sqrt(mouse.velocity.X * mouse.velocity.X + mouse.velocity.Y * mouse.velocity.Y);
+
+                //if max speed at current power is greater than current speed
+                //   or we changed directions enough that the sign flipped.
+                //   TODO: should be using dot products and projection here instead
+                //         to calculate speed in the direction of acceleration.
+                if (Math.Abs(hardware.getForwardPower()) * maxSpeed > speed
+                    || (Math.Sign(mouse.velocity.X) != Math.Sign(mouse.direction.X * hardware.getForwardPower()))
+                    || (Math.Sign(mouse.velocity.Y) != Math.Sign(mouse.direction.Y * hardware.getForwardPower()))) 
+                {
+                    float motion = hardware.getForwardPower() * motorMultiplier;
+                    mouse.velocity = new PointF(
+                        mouse.velocity.X + mouse.direction.X * motion, 
+                        mouse.velocity.Y + mouse.direction.Y * motion
+                        );
+                
+                    //clamp velocity at maxSpeed
+                    speed = (float)Math.Sqrt(mouse.velocity.X * mouse.velocity.X + mouse.velocity.Y * mouse.velocity.Y);
+                    if (speed > maxSpeed) {
+                        float speedMultiplier = maxSpeed / speed;
+                        mouse.velocity.X *= speedMultiplier;
+                        mouse.velocity.Y *= speedMultiplier;
+                    }
+                }
 
                 //update mouse position, correct collisions
                 mouse.position.X += mouse.velocity.X * deltaTicks / 1000.0f;
@@ -186,8 +200,10 @@ namespace MouseTester {
                 //move out of it.
                 if (posX < posXNR) { //if left of wall
                     mouse.position.X -= mouse.radius - (posXNR - posX);
+                    mouse.velocity.X *= -0.5f;
                 } else { //if right of wall
                     mouse.position.X += mouse.radius - (posX - posXNR);
+                    mouse.velocity.X *= -0.5f;
                 }
             }
 
@@ -198,8 +214,10 @@ namespace MouseTester {
                 //move out of it.
                 if (posY < posYNR) { //if below wall
                     mouse.position.Y -= mouse.radius - (posYNR - posY);
+                    mouse.velocity.Y *= -0.5f;
                 } else { //if above wall
                     mouse.position.Y += mouse.radius - (posY - posYNR);
+                    mouse.velocity.Y *= -0.5f;
                 }
             }
 
