@@ -64,6 +64,7 @@ namespace MouseTester {
             txtFeedback.AppendText("Angle: " + mouse.angle + "\n");
             txtFeedback.AppendText(String.Format("Position: [{0:0.00}, {1:0.00}] \n", mouse.position.X, mouse.position.Y));
             txtFeedback.AppendText(String.Format("Direction: [{0:0.00}, {1:0.00}] \n", mouse.direction.X, mouse.direction.Y));
+            txtFeedback.AppendText("Radius: " + mouse.radius + "\n");
 
             txtFeedback.AppendText("\n");
             length = txtFeedback.Text.Length;
@@ -95,7 +96,7 @@ namespace MouseTester {
 
                 //set deltaTime
                 currentTick = System.Environment.TickCount; //this is milliseconds
-                deltaTicks = currentTick - lastTick; //This _should_ be milliseconds.
+                deltaTicks = currentTick - lastTick;
                 lastTick = currentTick;
 
                 //perform AI update
@@ -106,6 +107,7 @@ namespace MouseTester {
                 //TODO: momentum
                 mouse.angle += hardware.getTurnPower() * turnScale * deltaTicks / 1000.0f;
                 mouse.direction = new PointF((float)Math.Cos(mouse.angle), (float)Math.Sin(mouse.angle));
+                
 
                 float motion = hardware.getForwardPower() * speedScale * deltaTicks / 1000.0f;
                 mouse.position.X += mouse.direction.X * motion;
@@ -146,6 +148,7 @@ namespace MouseTester {
             float posY = mouse.position.Y;
             int posYN = (int)posY;
             int posYNR = (int)Math.Round(posY);
+            float vDist; //distance to closest vertex
             Vertex check;
             //TODO: handle vertices, not just edges.
             //  (doesn't work correctly if hitting edge from beside, 
@@ -179,6 +182,14 @@ namespace MouseTester {
                 } else { //if above wall
                     mouse.position.Y += mouse.radius - (posY - posYNR);
                 }
+            }
+
+            //fix vertex collisions
+            vDist = (posXNR - posX) * (posXNR - posX) + (posYNR - posY) * (posYNR - posY);
+            if (vDist < mouse.radius * mouse.radius) {
+                float factor = 1 - (float)Math.Sqrt(vDist) / mouse.radius;
+                mouse.position.X += factor * (posX - posXNR);
+                mouse.position.Y += factor * (posY - posYNR);
             }
         }
 

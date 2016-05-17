@@ -12,7 +12,7 @@ namespace MouseTester {
         private Maze maze;
         private Matrix trans;
         private Mouse mouse;
-        private Pen mousePen = new Pen(Color.Orange, 0.15f);
+        private static Pen mousePen = new Pen(Color.Orange, 0.15f);
         public Bitmap bg;
 
         public MazePanel() {
@@ -70,11 +70,12 @@ namespace MouseTester {
 
             //draw other stuff here
             if (mouse != null) {
+                float mouseSize = mouse.radius * 2 - mousePen.Width;
                 g.DrawEllipse(mousePen, 
-                    mouse.position.X - 0.2f, 
-                    mouse.position.Y - 0.2f,
-                    0.4f, 
-                    0.4f);
+                    mouse.position.X - mouseSize / 2,
+                    mouse.position.Y - mouseSize / 2,
+                    mouseSize,
+                    mouseSize);
                 g.DrawLine(mousePen,
                     mouse.position.X,
                     mouse.position.Y,
