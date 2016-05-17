@@ -14,6 +14,7 @@ namespace MouseTester {
         public PointF position = new PointF(StartPosition.X, StartPosition.Y);  //is maze coordinates. 1,1 is lower left corner, world space
         public PointF direction = new PointF(StartDirection.X, StartDirection.Y); //this should be normalized, world space
         public PointF velocity = new PointF(0, 0); //this is in world space
+
         public float speed = 0.0f;                        //should be vector, but this is easier right now.
         public float angle = (float)(Math.PI / 2.0);      //in radians. 0 is right, pi/2 is up.
 

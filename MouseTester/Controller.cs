@@ -15,8 +15,7 @@ namespace MouseTester {
         MouseAI ai;
         RichTextBox txtFeedback;
         MazePanel mazeDisplay;
-
-
+        
         //Mouse physics parameters
         private Mouse mouse;
         private float speedScale = 5.0f;
@@ -150,9 +149,6 @@ namespace MouseTester {
             int posYNR = (int)Math.Round(posY);
             float vDist; //distance to closest vertex
             Vertex check;
-            //TODO: handle vertices, not just edges.
-            //  (doesn't work correctly if hitting edge from beside, 
-            //   rather than straight on.)
             
             //check if out-of-bounds
             if (posXNR > maze.sizeX - 2 || posXNR < 1 ||
